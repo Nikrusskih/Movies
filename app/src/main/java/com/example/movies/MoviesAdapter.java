@@ -6,19 +6,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
     private List<Movie> movies = new ArrayList<>();
     private OnReachEndListener onReachEndListener;
+    private OnMovieClickListener onMovieClickListener;
+
+    public void setOnMovieClickListener(OnMovieClickListener onMovieClickListener) {
+        this.onMovieClickListener = onMovieClickListener;
+    }
 
     public void setOnReachEndListener(OnReachEndListener onReachEndListener) {
         this.onReachEndListener = onReachEndListener;
@@ -61,9 +63,18 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         holder.textViewRating.setBackground(background);
         holder.textViewRating.setText(String.valueOf(rating).substring(0, 3));
 
-        if (position == movies.size() - 1 && onReachEndListener != null) {
+        if (position >= movies.size() - 10 && onReachEndListener != null) {
             onReachEndListener.onReachEnd();
         }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onMovieClickListener!=null){
+                    onMovieClickListener.onMovieClick(movie);
+                }
+            }
+        });
     }
 
     @Override
@@ -73,6 +84,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
     interface OnReachEndListener {
         void onReachEnd();
+    }
+
+    interface OnMovieClickListener {
+        void onMovieClick(Movie movie);
     }
 
     static class MovieViewHolder extends RecyclerView.ViewHolder {
