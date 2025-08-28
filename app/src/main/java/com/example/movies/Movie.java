@@ -16,6 +16,8 @@ public class Movie implements Serializable {
     private int year;
     @SerializedName("poster")
     private Poster poster;
+    @SerializedName("rating")
+    private Rating rating;
 
     @Override
     public String toString() {
@@ -28,9 +30,6 @@ public class Movie implements Serializable {
                 ", rating=" + rating +
                 '}';
     }
-
-    @SerializedName("rating")
-    private Rating rating;
 
     public Movie(int id, String name, String description, int year, Poster poster, Rating rating) {
         this.id = id;

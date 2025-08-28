@@ -28,7 +28,9 @@ public class MovieDetailActivity extends AppCompatActivity {
     private TextView textViewYear;
     private TextView textViewDescription;
     private RecyclerView recyclerViewTrailers;
-    private TrailersAdapter adapter;
+    private RecyclerView recyclerViewReviews;
+    private TrailersAdapter trailersAdapter;
+    private ReviewsAdapter reviewsAdapter ;
 
 
     @Override
@@ -37,9 +39,10 @@ public class MovieDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_movie_detail);
         viewModal = new ViewModelProvider(this).get(MovieDetailViewModal.class);
         initViews();
-        adapter = new TrailersAdapter();
-        recyclerViewTrailers.setAdapter(adapter);
-
+        trailersAdapter = new TrailersAdapter();
+        reviewsAdapter = new ReviewsAdapter();
+        recyclerViewTrailers.setAdapter(trailersAdapter);
+        recyclerViewReviews.setAdapter(reviewsAdapter);
 
 
         Movie movie = (Movie) getIntent().getSerializableExtra(EXTRA_MOVIE);
@@ -55,11 +58,11 @@ public class MovieDetailActivity extends AppCompatActivity {
         viewModal.getTrailers().observe(this, new Observer<List<Trailer>>() {
             @Override
             public void onChanged(List<Trailer> trailers) {
-                adapter.setTrailers(trailers);
+                trailersAdapter.setTrailers(trailers);
             }
         });
 
-        adapter.setOnTrailerClickListener(new TrailersAdapter.OnTrailerClickListener() {
+        trailersAdapter.setOnTrailerClickListener(new TrailersAdapter.OnTrailerClickListener() {
             @Override
             public void onTrailerClick(Trailer trailer) {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -67,6 +70,13 @@ public class MovieDetailActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        viewModal.getReviews().observe(this, new Observer<List<Review>>() {
+            @Override
+            public void onChanged(List<Review> reviews) {
+                reviewsAdapter.setReviews(reviews);
+            }
+        });
+        viewModal.loadReviews(movie.getId());
     }
 
 
@@ -76,6 +86,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         textViewYear = findViewById(R.id.textViewYear);
         textViewDescription = findViewById(R.id.textViewDescription);
         recyclerViewTrailers = findViewById(R.id.recyclerViewTrailers);
+        recyclerViewReviews = findViewById(R.id.recyclerViewReviews);
     }
 
     public static Intent newIntent(Context context, Movie movie){

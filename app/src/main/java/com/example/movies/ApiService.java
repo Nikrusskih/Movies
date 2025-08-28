@@ -17,4 +17,8 @@ public interface ApiService {
     @Headers("X-API-KEY:" + TOKEN)
     Single<TrailerResponse> loadTrailers(@Path("id") int id);
 
+    @GET("review?field=movieId")
+    @Headers("X-API-KEY:" + TOKEN)
+    Single<ReviewResponse> loadReviews(@Query("search") int id);
+
 }
