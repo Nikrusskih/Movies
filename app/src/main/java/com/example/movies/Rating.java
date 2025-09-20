@@ -8,7 +8,13 @@ public class Rating implements Serializable {
     @SerializedName("kp")
     private double kp;
 
+    public Rating(){}
+
     public Rating(double kp) {
+        this.kp = kp;
+    }
+
+    public void setKp(double kp) {
         this.kp = kp;
     }
 

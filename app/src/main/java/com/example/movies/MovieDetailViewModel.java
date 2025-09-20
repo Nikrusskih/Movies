@@ -8,7 +8,6 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -18,12 +17,14 @@ import io.reactivex.rxjava3.functions.Consumer;
 import io.reactivex.rxjava3.functions.Function;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-public class MovieDetailViewModal extends AndroidViewModel {
+public class MovieDetailViewModel extends AndroidViewModel {
     private static final String TAG = "MovieDetailViewModal";
 
     private final MutableLiveData<List<Trailer>> trailers = new MutableLiveData<>();
     private final MutableLiveData<List<Review>> reviews = new MutableLiveData<>();
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
+
+    private final MovieDAO movieDAO;
 
     public LiveData<List<Trailer>> getTrailers() {
         return trailers;
@@ -33,8 +34,13 @@ public class MovieDetailViewModal extends AndroidViewModel {
         return reviews;
     }
 
-    public MovieDetailViewModal(@NonNull Application application) {
+    public MovieDetailViewModel(@NonNull Application application) {
         super(application);
+        movieDAO = MovieDatabase.getInstance(application).movieDAO();
+    }
+
+    public LiveData<Movie> getFavoriteMovie(int movieId) {
+        return movieDAO.getFavoriteMovie(movieId);
     }
 
     public void loadReviews(int id) {
@@ -58,6 +64,20 @@ public class MovieDetailViewModal extends AndroidViewModel {
 
                     }
                 });
+        compositeDisposable.add(disposable);
+    }
+
+    public void insertMovie(Movie movie){
+        Disposable disposable = movieDAO.insertMovie(movie)
+                .subscribeOn(Schedulers.io())
+                .subscribe();
+        compositeDisposable.add(disposable);
+    }
+
+    public void removeMovie(int movieId){
+        Disposable disposable = movieDAO.removeMovie(movieId)
+                .subscribeOn(Schedulers.io())
+                .subscribe();
         compositeDisposable.add(disposable);
     }
 
